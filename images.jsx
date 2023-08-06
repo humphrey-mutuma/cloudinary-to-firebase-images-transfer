@@ -11,19 +11,17 @@ const cloudinary_root_url =
 
 export default function Images() {
   const { userData } = useUserContext();
-
+//get images
   const { data, error, isLoading } = useSWR("/api/images", fetcher);
   // const [imageUrl, setImageUrl] = useState([]);
   const article = data?.data;
   if (error) return <div>failed to load</div>;
   if (isLoading) return <div>loading...</div>;
 
-  // upload images to firestore
   console.log("article", article);
-
+  // upload images to firebase storage
   const handleImagesUpload = async () => {
-    // Check if any files were selected
-
+    // upload them files
     article?.slice()?.forEach(async (acceptedFile, index) => {
       const articleImage = cloudinary_root_url.concat(
         acceptedFile.articleCoverImage
@@ -34,7 +32,7 @@ export default function Images() {
 
       const storageRef = ref(
         storage,
-        `/foldername/${userData.data._id}/${acceptedFile._id}`
+        `/foldername/${acceptedFile.postWriter._id}/${acceptedFile._id}`
       );
       const uploadTask = uploadBytesResumable(storageRef, imageBlob);
 
